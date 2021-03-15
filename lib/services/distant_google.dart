@@ -11,8 +11,8 @@ class GoogleGeocoding implements Geocoding {
 
   static const _host = 'https://maps.google.com/maps/api/geocode/json';
 
-  final String apiKey;
-  final String language;
+  final String? apiKey;
+  final String? language;
 
   final HttpClient _httpClient;
 
@@ -21,7 +21,7 @@ class GoogleGeocoding implements Geocoding {
     assert(apiKey != null, "apiKey must not be null");
 
   Future<List<Address>> findAddressesFromCoordinates(Coordinates coordinates) async  {
-    final url = '$_host?key=$apiKey${language != null ? '&language='+language : ''}&latlng=${coordinates.latitude},${coordinates.longitude}';
+    final url = '$_host?key=$apiKey${language != null ? '&language='+language! : ''}&latlng=${coordinates.latitude},${coordinates.longitude}';
     return _send(url);
   }
 
@@ -42,15 +42,14 @@ class GoogleGeocoding implements Geocoding {
 
     var results = data["results"];
 
-    if(results == null)
-      return null;
+    if (results == null) return [];
 
     return results.map(_convertAddress)
                   .map<Address>((map) => Address.fromMap(map))
                   .toList();
   }
 
-  Map _convertCoordinates(dynamic geometry) {
+  Map? _convertCoordinates(dynamic geometry) {
     if(geometry == null)
       return null;
 
